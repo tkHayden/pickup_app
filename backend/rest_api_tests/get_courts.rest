@@ -1,0 +1,36 @@
+GET http://localhost:3001/api/courts/
+
+
+#####
+POST http://localhost:3001/api/courts
+Content-Type: application/json
+
+{
+    "title": "Santa Barbara High School",
+    "region" : {
+        "identifier": "Santa Barbara High School",
+        "latitude": 34.42961630772183,
+        "longitude": -119.69758047820534,
+        "radius": 200
+    },
+    "activeHoopers": 0
+}
+
+
+####
+
+PUT http://localhost:3001/api/courts/611d88ae287b454478173209
+Content-Type: application/json
+
+{
+    "title": "Santa Barbara High School",
+    "region" : {
+        "identifier": "Santa Barbara High School",
+        "latitude": 34.42961630772183,
+        "longitude": -119.69758047820534,
+        "radius": 200
+    },
+    "activeHoopers": 3,
+    "increment": true,
+    "last_updated": ""
+}
