@@ -7,6 +7,7 @@ import * as TaskManager from 'expo-task-manager';
  import MapView, {Marker} from "react-native-maps";
 import { LocationGeofencingEventType, LocationGeofencingRegionState } from 'expo-location';
 
+
 export default function Map() {
   const [location, setLocation] = useState(null);
   const [longitude, setLongitude] = useState(0);
@@ -58,7 +59,6 @@ export default function Map() {
       console.log("You've left region:", region);
     }
   });
-
   useEffect(() => {
     (async () => {
 
