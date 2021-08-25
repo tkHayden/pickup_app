@@ -8,8 +8,8 @@ const App = () => {
   return (
     <View style={{ flex: 1 }}>
       {
-         // <Map />
-         <Sockett/>
+          <Map />
+         //<Sockett/>
   
         
         }

@@ -1,12 +1,16 @@
-import React,{useEffect,useState} from "react";
+import React,{useEffect,useState,useRef} from "react";
 import { View, TextInput,Text } from "react-native";
 import io from 'socket.io-client'
 const Socket = () => {
     const [message,setMessage] = useState('')
-    const [socket,setSocket] = useState(io())
+    const socket = useRef()
+
+    
     useEffect(  () =>{    
-        const newSocket =  io('http://192.168.1.13:3001')
-        setSocket(newSocket)
+        socket.current = io('http://192.168.1.13:3001')
+        socket.current.on('message', (payload) =>{
+          console.log(payload)
+        })
         
         return () => {
             disconnectSocket();
@@ -15,20 +19,17 @@ const Socket = () => {
 
     const disconnectSocket = () =>{
         console.log('Disconnecting socket...');
-        if(socket) socket.disconnect();
+        if(socket.current){ 
+          socket.current.disconnect();
+        }
       }
     
     const submitMessage = () =>{
       console.log(message)
     
-      socket.emit('court:create', message)
+      socket.current.emit('court:create', message)
       setMessage('')
-      listenn()
-    }
-    const listenn = () =>{   
-        socket.on('message',(payload)=>{
-            console.log('worked')
-        })    
+  
     }
 
     
