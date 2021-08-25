@@ -8,11 +8,18 @@ const App = () => {
 
   return (
     <View style={{ flex: 1 }}>
+<<<<<<< HEAD
       
         <SocketContext.Provider value={socket} >
           <Map/>
         </SocketContext.Provider>
         
+=======
+      {
+          <Map />
+         //<Sockett/>
+  
+>>>>>>> 7c3f64c (Moved geo-fencing and background location to seperate file)
         
         
   

@@ -63,6 +63,14 @@ export default function Map() {
   }, [])
   useEffect(() => {
     (async () => {
+      await Geo({setLatitude,setLongitude})
+    //   const { granted: fgGranted } =
+    //   await Location.requestForegroundPermissionsAsync();
+    // if (!fgGranted) {
+    //   return Alert.alert("Required", "Please grant GPS Location");
+    // }
+    // const { granted: bgGranted } =
+    //   await Location.requestBackgroundPermissionsAsync();
 
       const { granted: fgGranted } =
         await Location.requestForegroundPermissionsAsync();
