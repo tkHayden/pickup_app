@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
  import MapView, {Marker} from "react-native-maps";
 import { LocationGeofencingEventType, LocationGeofencingRegionState } from 'expo-location';
+import io from 'socket.io-client'
 
 
 export default function Map() {
@@ -13,6 +14,7 @@ export default function Map() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [socket,setSocket] = useState()
 
   const region = [{
     identifier: 'SBHS',
@@ -59,6 +61,13 @@ export default function Map() {
       console.log("You've left region:", region);
     }
   });
+  useEffect(() =>{
+    const newSocket =  io('http://192.168.1.13:3001')
+    setSocket(newSocket)
+    return () => {
+      disconnectSocket();
+    }
+  },[])
   useEffect(() => {
     (async () => {
 
@@ -96,6 +105,11 @@ export default function Map() {
 
     })();
   }, []);
+
+  const disconnectSocket = () =>{
+    console.log('Disconnecting socket...');
+    if(socket) socket.disconnect();
+  }
 
   return (
       <View style={{ flex: 1 }}>
