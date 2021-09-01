@@ -1,20 +1,21 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
  import MapView, {Marker} from "react-native-maps";
-import { LocationGeofencingEventType, LocationGeofencingRegionState } from 'expo-location';
 import io from 'socket.io-client'
-
+import courtService from '../../services/courts'
+import {SocketContext} from '../../socket'
 
 export default function Map() {
   const [location, setLocation] = useState(null);
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [socket,setSocket] = useState()
+  const [courts,setCourts] = useState(null)
+
+  const socket = React.useContext(SocketContext)
 
   const region = [{
     identifier: 'SBHS',
@@ -22,7 +23,16 @@ export default function Map() {
     longitude: -119.69758047820534,
     radius: 200,
     notifyOnEnter: true,
-    notifyOnExit: false,
+    notifyOnExit: true,
+    state: Location.GeofencingRegionState.Outside
+    
+  },{
+    identifier: 'marymou',
+    latitude: 34.72961630772183,
+    longitude: -119.59758047820534,
+    radius: 200,
+    notifyOnEnter: true,
+    notifyOnExit: true,
     state: Location.GeofencingRegionState.Outside
     
   }]
@@ -42,13 +52,7 @@ export default function Map() {
       setLongitude(locations[0].coords.longitude)
     }
   });
-  const SBHS = [{
-    lat: 34.42961630772183,
-    long: -119.69758047820534
-  },{
-  lat:latitude,
-  long: longitude
-  }]
+ 
 
   TaskManager.defineTask(GEO_LOC, ({ data: { eventType, region }, error }) => {
     if (error) {
@@ -56,17 +60,21 @@ export default function Map() {
       return;
     }
     if (eventType === Location.GeofencingEventType.Enter) {
-      console.log("You've entered region:", region);
-    } else if (eventType === Location.GeofencingEventType.Exit) {
-      console.log("You've left region:", region);
+      console.log("You've entered region:", region.identifier);
+      socket.emit('court:create',region.identifier)
+
+    } 
+    if (eventType === Location.GeofencingEventType.Exit) {
+      console.log("You've left region:", region.identifier);
+      socket.emit('court:create','left')
     }
   });
   useEffect(() =>{
-    const newSocket =  io('http://192.168.1.13:3001')
-    setSocket(newSocket)
-    return () => {
-      disconnectSocket();
-    }
+    (async () => {
+      const newCourts = await courtService.fetchCourts()
+       setCourts(newCourts)
+     
+    })()
   },[])
   useEffect(() => {
     (async () => {
@@ -90,6 +98,10 @@ export default function Map() {
       if (value) {
         Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME)
       }
+      const valued = await Location.hasStartedGeofencingAsync(GEO_LOC)
+      if (valued) {
+        Location.stopGeofencingAsync(GEO_LOC)
+      }
     
     await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
       accuracy: Location.Accuracy.BestForNavigation,
@@ -111,6 +123,28 @@ export default function Map() {
     if(socket) socket.disconnect();
   }
 
+  const renderMapMarkers = () =>{
+    if (courts){
+      return(
+        courts.map((marker,index) =>(
+          <Marker
+          key = {index}
+          coordinate ={{
+            latitude: marker.region.latitude,
+            longitude: marker.region.longitude
+          }}
+          >
+           
+        </Marker>
+      )
+        )
+      )
+    }
+    return(
+      null
+    )
+  }
+
   return (
       <View style={{ flex: 1 }}>
         <MapView
@@ -121,17 +155,15 @@ export default function Map() {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421
           }}>
-            {SBHS.map((marker,index) =>(
-              <Marker
-              key = {index}
-              coordinate ={{
-                latitude: marker.lat,
-                longitude: marker.long
-              }}
-              >
-               
+            { renderMapMarkers()}
+            <Marker
+            pinColor= 'green'
+            coordinate={{
+              latitude:latitude,
+              longitude:longitude
+            }}>
+
             </Marker>
-            ))}
           </MapView>
       </View>
   )
