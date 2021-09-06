@@ -6,11 +6,11 @@ POST http://localhost:3001/api/courts
 Content-Type: application/json
 
 {
-    "title": "Santa Barbara High School",
+    "title": "Girsh Park",
     "region" : {
-        "identifier": "Santa Barbara High School",
-        "latitude": 34.42961630772183,
-        "longitude": -119.69758047820534,
+        "identifier": "Girsh Park",
+        "latitude": 34.42553955694498,
+        "longitude":   -119.87407376983998,
         "radius": 200
     },
     "activeHoopers": 0

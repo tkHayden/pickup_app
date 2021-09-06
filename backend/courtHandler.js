@@ -1,12 +1,20 @@
+const Court = require('./models/court')
+
 const orderHandler =(io, socket) =>{
 
-    const createCourt = (payload) =>{
+    const incrementHooper =  (payload) =>{
         console.log(payload)
-        const mess = "success"
-        io.emit('message',mess)
+        Court.findOne({title: payload}).then(test =>{
+            console.log(test)
+            io.emit('message',test)
+        })
+        .catch(error =>{
+            console.log(error)
+        })
+
 
     }
-    socket.on('court:create',createCourt)
+    socket.on('hooper:increment',incrementHooper)
 }
 
 module.exports = orderHandler
