@@ -8,18 +8,11 @@ const App = () => {
 
   return (
     <View style={{ flex: 1 }}>
-<<<<<<< HEAD
       
         <SocketContext.Provider value={socket} >
           <Map/>
         </SocketContext.Provider>
         
-=======
-      {
-          <Map />
-         //<Sockett/>
-  
->>>>>>> 7c3f64c1bd703b3f8eb61cedee5569765c477d7a
         
         
   
