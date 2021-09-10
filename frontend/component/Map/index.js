@@ -1,16 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import courtService from '../../services/courts'
-import Location from '../services/LocationTracker'
+import LocationTracker from '../services/LocationTracker'
+import Geofencing from '../services/Geofencing';
 
 export default function Map() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [courts, setCourts] = useState(null)
-
-
 
   useEffect(() => {
     (async () => {
@@ -21,7 +20,7 @@ export default function Map() {
   }, [])
 
 
-  const renderMapMarkers = () => {
+  const renderCourtMarkers = () => {
     if (courts) {
       return (
   
@@ -45,13 +44,10 @@ export default function Map() {
     )
   }
 
-  const err = () =>{
-    console.log('error')
-  }
-
   return (
     <View style={{ flex: 1 }}>
-      {courts ? <Location courts={courts} setLatitude={setLatitude} setLongitude={setLongitude}/> : null }
+       <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude}/>
+       {courts ? <Geofencing courts= {courts}/> : null}
       <MapView
         style={{ flex: 1 }}
         region={{
@@ -60,7 +56,7 @@ export default function Map() {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
         }}>
-        {renderMapMarkers()}
+        {renderCourtMarkers()}
         <Marker
           pinColor='green'
           coordinate={{
