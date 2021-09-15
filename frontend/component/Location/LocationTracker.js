@@ -14,7 +14,7 @@ const LocationTracker = ({ setLatitude, setLongitude }) => {
     }
     if (data) {
       const { locations } = data;
-      console.log(locations[0].coords)
+      console.log(locations[0].coords.latitude,locations[0].coords.longitude)
       setLatitude(locations[0].coords.latitude)
       setLongitude(locations[0].coords.longitude)
     }
