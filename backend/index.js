@@ -8,13 +8,6 @@ const io = new Server(server);
 
 const orderHandler = require('./courtHandler')
 
-// io.on('connection', socket =>{
-//     console.log('a user connected!!')
-//     socket.on('chat message', msg =>{
-//         console.log(msg)
-//     })
-// })
-
 
 const onConnection = (socket) =>{
     console.log('user connected!')
