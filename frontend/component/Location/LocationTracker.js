@@ -1,10 +1,10 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 
 
-const LocationTracker = ({ setLatitude, setLongitude }) => {
-
+const LocationTracker = ({ setLatitude, setLongitude,setRegion }) => {
+  const [initialRegion,setInitialRegion] = useState(true)
   const BACKGROUND_LOCATION = 'background-location-task';
 
   TaskManager.defineTask(BACKGROUND_LOCATION, ({ data, error }) => {
@@ -17,6 +17,11 @@ const LocationTracker = ({ setLatitude, setLongitude }) => {
       console.log(locations[0].coords.latitude,locations[0].coords.longitude)
       setLatitude(locations[0].coords.latitude)
       setLongitude(locations[0].coords.longitude)
+      //user's location is set to the region only 1 time when the app is started
+      if(initialRegion === true){
+      setRegion({latitude:locations[0].coords.latitude,longitude:locations[0].coords.longitude,latitudeDelta: 0.0922,longitudeDelta: 0.0421 })
+      setInitialRegion(false)
+      }
     }
   });
 

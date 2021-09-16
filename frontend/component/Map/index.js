@@ -5,11 +5,16 @@ import MapView, { Marker } from "react-native-maps";
 import courtService from '../../services/courts'
 import LocationTracker from '../Location/LocationTracker'
 import Geofencing from '../Location/Geofencing';
+import CourtModal from '../CourtModal';
 
 export default function Map() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [courts, setCourts] = useState(null)
+  const [modalCourt,setModalCourt]= useState(null)
+  const [showModal,setShowModal] = useState(false)
+  const [region,setRegion] = useState()
+  
 
   useEffect(() => {
     (async () => {
@@ -32,7 +37,10 @@ export default function Map() {
               longitude: marker.region.longitude
             }}
             //testing onPress for markers. Probably will implement a modal
-            onPress={() => console.log(marker.title)}
+            onPress={() => {
+              setModalCourt(marker)
+              setShowModal(true)
+            }}
           >
           </Marker>
         )
@@ -46,16 +54,13 @@ export default function Map() {
 
   return (
     <View style={{ flex: 1 }}>
-       <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude}/>
+       <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude} setRegion={setRegion}/>
        {courts ? <Geofencing courts= {courts} setCourts={setCourts}/> : null}
       <MapView
         style={{ flex: 1 }}
-        region={{
-          latitude: latitude,
-          longitude: longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421
-        }}>
+        region={region}
+        onRegionChangeComplete = {region => setRegion(region)}
+        >
         {renderCourtMarkers()}
         <Marker
           pinColor='green'
@@ -66,6 +71,7 @@ export default function Map() {
 
         </Marker>
       </MapView>
+      {showModal ? <CourtModal visible={showModal} court={modalCourt} setModalShowable={setShowModal}/> : null}
     </View>
   )
 }
