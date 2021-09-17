@@ -37,9 +37,7 @@ const Geofencing = ({ courts,setCourts }) => {
   },[])
   useEffect(() => {
     (async () => {
-      if(regions.length > 0){
       await Location.startGeofencingAsync(GEO_LOC, regions)
-      }
     })();
     return async () => {
       await Location.stopGeofencingAsync(GEO_LOC)
