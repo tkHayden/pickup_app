@@ -5,13 +5,18 @@ import MapView, { Marker } from "react-native-maps";
 import courtService from '../../services/courts'
 import LocationTracker from '../Location/LocationTracker'
 import Geofencing from '../Location/Geofencing';
+import CourtModal from '../CourtModal';
+import * as Location from 'expo-location'
 
 export default function Map() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [courts, setCourts] = useState(null)
+  const [modalCourt,setModalCourt]= useState(null)
+  const [showModal,setShowModal] = useState(false)
   const [regions,setRegions]= useState(null)
   const[ test,setTest]= useState(null)
+  const [initialLocation,setInitialLocation] = useState({longitude:0,latitude:0})
 
   useEffect(() => {
     (async () => {
@@ -24,6 +29,13 @@ export default function Map() {
     })()
   }, [])
 
+  useEffect(() => {
+    (async () =>{
+      const currentLocation = await Location.getCurrentPositionAsync({})
+      setInitialLocation({longitude: currentLocation.coords.longitude,
+      latitude: currentLocation.coords.latitude})
+    })()
+  },[])
 
   const renderCourtMarkers = () => {
     if (courts) {
@@ -37,7 +49,10 @@ export default function Map() {
               longitude: marker.region.longitude
             }}
             //testing onPress for markers. Probably will implement a modal
-            onPress={() => console.log(marker.title)}
+            onPress={() => {
+              setModalCourt(marker)
+              setShowModal(true)
+            }}
           >
           </Marker>
         )
@@ -56,11 +71,16 @@ export default function Map() {
       <MapView
         style={{ flex: 1 }}
         region={{
-          latitude: latitude,
-          longitude: longitude,
+          latitude: initialLocation.latitude,
+          longitude: initialLocation.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
-        }}>
+        }}
+        onRegionChangeComplete={(region) =>{
+          setInitialLocation(region)
+        }}
+        >
+          
         {renderCourtMarkers()}
         <Marker
           pinColor='green'
@@ -71,6 +91,7 @@ export default function Map() {
 
         </Marker>
       </MapView>
+      {showModal ? <CourtModal visible={showModal} court={modalCourt} setModalShowable={setShowModal}/> : null}
     </View>
   )
 }
