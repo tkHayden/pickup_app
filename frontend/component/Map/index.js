@@ -10,11 +10,16 @@ export default function Map() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [courts, setCourts] = useState(null)
+  const [regions,setRegions]= useState(null)
+  const[ test,setTest]= useState(null)
 
   useEffect(() => {
     (async () => {
       const newCourts = await courtService.fetchCourts()
       setCourts(newCourts)
+      setRegions(newCourts.map(court => (court.region)))
+      const initialRegionExits = newCourts.map(re => ({identifier:re.region.identifier,exit:false}))
+      setTest(initialRegionExits)
 
     })()
   }, [])
@@ -47,7 +52,7 @@ export default function Map() {
   return (
     <View style={{ flex: 1 }}>
        <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude}/>
-       {courts ? <Geofencing courts= {courts} setCourts={setCourts}/> : null}
+       {(regions && test) ? <Geofencing regions={regions} exitReg={test} courts= {courts} setCourts={setCourts}/> : null}
       <MapView
         style={{ flex: 1 }}
         region={{
