@@ -8,26 +8,14 @@ import Geofencing from '../Location/Geofencing';
 import CourtModal from '../CourtModal';
 import * as Location from 'expo-location'
 
-export default function Map() {
+export default function Map({courts,setCourts}) {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
-  const [courts, setCourts] = useState(null)
   const [modalCourt,setModalCourt]= useState(null)
   const [showModal,setShowModal] = useState(false)
-  const [regions,setRegions]= useState(null)
-  const[ test,setTest]= useState(null)
   const [initialLocation,setInitialLocation] = useState({longitude:0,latitude:0})
 
-  useEffect(() => {
-    (async () => {
-      const newCourts = await courtService.fetchCourts()
-      setCourts(newCourts)
-      setRegions(newCourts.map(court => (court.region)))
-      const initialRegionExits = newCourts.map(re => ({identifier:re.region.identifier,exit:false}))
-      setTest(initialRegionExits)
 
-    })()
-  }, [])
 
   useEffect(() => {
     (async () =>{
@@ -63,11 +51,9 @@ export default function Map() {
       null
     )
   }
-
   return (
     <View style={{ flex: 1 }}>
        <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude}/>
-       {(regions && test) ? <Geofencing regions={regions} exitReg={test} courts= {courts} setCourts={setCourts}/> : null}
       <MapView
         style={{ flex: 1 }}
         region={{
