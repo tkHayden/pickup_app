@@ -41,13 +41,13 @@ const LocationTracker = ({ setLatitude, setLongitude }) => {
 
 
       const started = await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
-        accuracy: Location.Accuracy.BestForNavigation,
+        accuracy: Location.Accuracy.High,
         timeInterval: 10000,
         foregroundService: {
           notificationTitle: "App Name",
           notificationBody: "Location is used when App is in background",
         },
-        activityType: Location.ActivityType.Other,
+        activityType: Location.ActivityType.AutomotiveNavigation,
         showsBackgroundLocationIndicator: true,
       })
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Image, Modal, StyleSheet, Text, Pressable, View, ImageBackgroundBase } from "react-native";
+import { Image, StyleSheet, Text, Pressable, View} from "react-native";
+import Modal from "react-native-modal";
 
 
 const CourtModal = ({visible,court,setModalShowable}) => {
@@ -24,7 +25,11 @@ const Separator = () => (
    }
 
   return(
-    <Modal   visible={modalVisible} transparent={true} animationType='slide'>
+    <Modal visible={modalVisible} 
+            transparent={true} 
+            animationType='slide'
+            swipeDirection={["down"]}
+            onSwipeComplete={() => setModalShowable(false)}>
       <View style={styles.centeredView}>
       <View style={styles.modalView}>
         <Image
@@ -34,9 +39,8 @@ const Separator = () => (
           />
         <Text style={styles.title}>{court.title}</Text>
         <Separator/>
-
-        <Text>{court.activeHoopers}</Text>
-        <Pressable onPress={()=> setModalShowable(false)}><Text>Hide</Text></Pressable>
+        <Text style={styles.hooper}>Current Hoopers: {court.activeHoopers}</Text>
+        <Pressable style={styles.button} onPress={()=> setModalShowable(false)}><Text style={styles.buttonText}>Hide</Text></Pressable>
       </View>
       </View>
 
@@ -56,7 +60,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     marginHorizontal:20,
-    backgroundColor: "white",
     borderRadius: 20,
     paddingHorizontal:35,
     paddingTop:20,
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    backgroundColor: '#E4EFFE',
+    backgroundColor: 'rgba(228,239,254,.9)',
     width:370,
     height: 400
 
@@ -90,6 +93,27 @@ const styles = StyleSheet.create({
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  hooper:{
+    fontSize:17,
+    fontFamily:'serif',
+    marginBottom:5
+  }, 
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 38,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#54a5ed',
+  },
+  buttonText :{
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  }
 
 })
 
