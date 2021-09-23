@@ -1,12 +1,12 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import React, { useState, useEffect } from 'react';
-import { SocketContext } from '../../services/socket'
+import { useSocket } from '../../services/SocketProvider'
 
 const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
   const [regionExits, setRegionExits] = useState(exitReg)
 
-  const socket = React.useContext(SocketContext)
+  const socket = useSocket()
 
   const GEO_LOC = 'GEO_LOC'
 
@@ -23,9 +23,9 @@ const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
     const index = regionExits.findIndex(element => element.identifier === region.identifier)
     
     //These conditions check for the evenType and whether the region has  performed its initial exit/enter
-    //This is needed since expo-location library  has the behavoir of triggering the exit event for each
+    //This is needed since expo-location library  has the behavior of triggering the exit event for each
     //region upon startup and if the user is inside a region, it will trigger the enter event twice.
-    //This work around ignores the initial exit event and duplicat enter event
+    //This work-around handlesthe initial exit event and duplicat enter event
     if (eventType === Location.GeofencingEventType.Enter  && regionExits[index].exit === true) {
       console.log("You've entered region:", region.identifier);
       socket.emit('hooper:increment', region.identifier)

@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from "react";
 import { View } from "react-native";
 import Map from "./component/Map";
-import {socket,SocketContext } from './services/socket'
+import SocketProvider from './services/SocketProvider'
 import courtService from './services/courts'
 import Geofencing from "./component/Location/Geofencing";
 
@@ -26,10 +26,10 @@ useEffect(() => {
   return (
     <View style={{ flex: 1 }}>
       
-        <SocketContext.Provider value={socket} >
+        <SocketProvider>
         {(regions && test) ? <Geofencing regions={regions} exitReg={test} courts= {courts} setCourts={setCourts}/> : null}
         <Map courts={courts} setCourts={setCourts}/> 
-        </SocketContext.Provider>
+        </SocketProvider>
     </View>
   );
 };
