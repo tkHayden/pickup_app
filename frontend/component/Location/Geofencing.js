@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import React, { useState, useEffect } from 'react';
-import { useSocket } from '../../services/SocketProvider'
+import { useSocket } from '../SocketProvider'
 
 const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
   const [regionExits, setRegionExits] = useState(exitReg)
@@ -16,6 +16,8 @@ const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
   }
 
   TaskManager.defineTask(GEO_LOC, ({ data: { eventType, region }, error }) => {
+
+    console.log(region)
     if (error) {
       // error handling
       return;
@@ -45,7 +47,8 @@ const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
 
   useEffect(() => {
     (async () => {
-      await Location.hasStartedGeofencingAsync(GEO_LOC)
+      await Location.hasStartedGeofencingAsync(GEO_LOC,regions)
+      console.log('mounted')
 
     })();
     return async () => {

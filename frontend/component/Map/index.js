@@ -2,20 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from "react-native-maps";
-import courtService from '../../services/courts'
-import LocationTracker from '../Location/LocationTracker'
-import Geofencing from '../Location/Geofencing';
 import CourtModal from '../CourtModal';
 import * as Location from 'expo-location'
+import { useLocation } from '../LocationProvider';
 
 export default function Map({courts,setCourts}) {
-  const [longitude, setLongitude] = useState(0);
-  const [latitude, setLatitude] = useState(0);
   const [modalCourt,setModalCourt]= useState(null)
   const [showModal,setShowModal] = useState(false)
   const [initialLocation,setInitialLocation] = useState({longitude:0,latitude:0})
 
-
+  const location = useLocation()
 
   useEffect(() => {
     (async () =>{
@@ -53,7 +49,6 @@ export default function Map({courts,setCourts}) {
   }
   return (
     <View style={{ flex: 1 }}>
-       <LocationTracker setLatitude={setLatitude} setLongitude={setLongitude}/>
       <MapView
         style={{ flex: 1 }}
         region={{
@@ -71,8 +66,8 @@ export default function Map({courts,setCourts}) {
         <Marker
           pinColor='green'
           coordinate={{
-            latitude: latitude,
-            longitude: longitude
+            latitude: location.latitude,
+            longitude: location.longitude
           }}>
 
         </Marker>

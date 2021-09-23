@@ -1,11 +1,14 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import React, { useEffect } from 'react';
+import {useLocationUpdate} from '../LocationProvider'
 
 
 const LocationTracker = ({ setLatitude, setLongitude }) => {
 
   const BACKGROUND_LOCATION = 'background-location-task';
+
+  const updateLocation = useLocationUpdate()
 
   TaskManager.defineTask(BACKGROUND_LOCATION, ({ data, error }) => {
     if (error) {
@@ -15,8 +18,7 @@ const LocationTracker = ({ setLatitude, setLongitude }) => {
     if (data) {
       const { locations } = data;
       console.log(locations[0].coords.latitude,locations[0].coords.longitude)
-      setLatitude(locations[0].coords.latitude)
-      setLongitude(locations[0].coords.longitude)
+      updateLocation({latitude: locations[0].coords.latitude, longitude:locations[0].coords.longitude })
     }
   });
 
