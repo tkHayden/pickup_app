@@ -10,7 +10,8 @@ const courtSchema = new mongoose.Schema({
         radius: Number,
     },
     activeHoopers: Number,
-    last_updated: Date
+    last_updated: Date,
+    img_url:Array
     
 })
 
