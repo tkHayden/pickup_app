@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useSocket } from '../SocketProvider'
 import LocationTracker from './LocationTracker';
 
-const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
-  const [regionExits, setRegionExits] = useState(exitReg)
+const Geofencing = ({ courts,setCourts,regions,regStatus }) => {
+  const [regionStatus, setRegionStatus] = useState(regStatus)
 
   const socket = useSocket()
 
@@ -16,31 +16,31 @@ const Geofencing = ({ courts,setCourts,regions,exitReg }) => {
     setCourts(updatedCourts)
   }
 
+  const updateRegion = (identifier) =>{
+    const updatedRegionStatus = regionStatus.map(reg => reg.identifier === identifier ?{...reg,inside:!reg.inside} : reg)
+    setRegionStatus(updatedRegionStatus)
+  }
+
   TaskManager.defineTask(GEO_LOC, ({ data: { eventType, region }, error }) => {
 
     if (error) {
       // error handling
       return;
     }
-    const index = regionExits.findIndex(element => element.identifier === region.identifier)
+    const index = regionStatus.findIndex(element => element.identifier === region.identifier)
     
-    //These conditions check for the evenType and whether the region has  performed its initial exit/enter
-    //This is needed since expo-location library  has the behavior of triggering the exit event for each
-    //region upon startup and if the user is inside a region, it will trigger the enter event twice.
-    //This work-around handlesthe initial exit event and duplicat enter event
-    if (eventType === Location.GeofencingEventType.Enter  && regionExits[index].exit === true) {
+    //These conditions check for the eventType and whether the region is currently inside the region
+    //This prevents the duplication of exit and enter events that have popped up in development
+    if (eventType === Location.GeofencingEventType.Enter  && regionStatus[index].inside === false) {
       console.log("You've entered region:", region.identifier);
       socket.emit('hooper:increment', region.identifier)
+      updateRegion(region.identifier)
       updateCourt(region.identifier,1)
-    } else if (eventType === Location.GeofencingEventType.Exit && regionExits[index].exit === true) {
+    } else if (eventType === Location.GeofencingEventType.Exit && regionStatus[index].inside === true) {
       console.log("You've left region:", region.identifier);
       socket.emit('hooper:decrement', region.identifier)
+      updateRegion(region.identifier)
       updateCourt(region.identifier,-1)
-    }
-    if(regionExits[index].exit === false){
-      const newExits = regionExits.map(reg => reg.identifier === region.identifier ?{...reg,exit:true} : reg)
-      console.log(index)
-      setRegionExits(newExits)
     }
   })
 

@@ -11,7 +11,7 @@ import LocationTracker from './component/Location/LocationTracker'
 const App = () => {
   const [courts, setCourts] = useState(null)
 const [regions,setRegions]= useState(null)
-const[ test,setTest]= useState(null)
+const[ regionsStatus,setRegionsStatus]= useState(null)
 
 
 useEffect(() => {
@@ -19,8 +19,8 @@ useEffect(() => {
     const newCourts = await courtService.fetchCourts()
     setCourts(newCourts)
     setRegions(newCourts.map(court => (court.region)))
-    const initialRegionExits = newCourts.map(re => ({identifier:re.region.identifier,exit:false}))
-    setTest(initialRegionExits)
+    const initialRegionStatus = newCourts.map(re => ({identifier:re.region.identifier,inside:false}))
+    setRegionsStatus(initialRegionStatus)
 
   })()
 }, [])
@@ -29,7 +29,7 @@ useEffect(() => {
     <View style={{ flex: 1 }}>
 
         <SocketProvider>
-        {(regions && test) ? <Geofencing regions={regions} exitReg={test} courts= {courts} setCourts={setCourts}/> : null}
+        {(regions && regionsStatus) ? <Geofencing regions={regions} regStatus={regionsStatus} courts= {courts} setCourts={setCourts}/> : null}
           <LocationProvider>
             <LocationTracker/>
         <Map courts={courts} setCourts={setCourts}/> 
