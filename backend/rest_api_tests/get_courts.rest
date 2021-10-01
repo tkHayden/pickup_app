@@ -1,5 +1,8 @@
 GET http://localhost:3001/api/courts/
 
+#####
+GET http://localhost:3001/api/courts/photos/611d88ae287b454478173209
+
 
 #####
 POST http://localhost:3001/api/courts

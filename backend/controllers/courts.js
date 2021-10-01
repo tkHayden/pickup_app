@@ -3,7 +3,7 @@ const { findById } = require('../models/court')
 const Court = require('../models/court')
 
 courtRouter.get('/', async(request,response) => {
-    const courts = await Court.find({})
+    const courts = await Court.find({}).select('-img_url')
     response.json(courts)
 })
 
@@ -15,6 +15,11 @@ courtRouter.get('/:id', async(request,response) =>{
     }else{
         response.status(404).end()
     }
+})
+
+courtRouter.get('/photos/:id', async(request,response) =>{
+    const courtPhotos = await Court.findById(request.params.id).select('img_url')
+    response.json(courtPhotos)
 })
 
 courtRouter.post('/', async(request,response) => {
