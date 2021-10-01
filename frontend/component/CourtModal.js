@@ -1,28 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, Pressable, View} from "react-native";
+import { Image, StyleSheet, Text, Pressable, View, ScrollView} from "react-native";
 import Modal from "react-native-modal";
+import courtService from '../services/courts'
 
 
 const CourtModal = ({visible,court,setModalShowable}) => {
   const [modalVisible,setModalVisible] = useState(visible)
+  const [courtPhotos,setCourtPhotos] = useState(null)
 
   
 const Separator = () => (
   <View style={styles.separator} />
 );
 
+const toggleModal = () =>{
+  if(visible){
+    setModalVisible(true)
+  }else{
+    setModalVisible(false)
+  }
+}
+useEffect(() =>{
+  console.log(court.id)
+  toggleModal()
+},[visible])
 
   useEffect(() =>{
-    toggleModal()
+    if(visible){
+    (async () =>{
+
+    const photos = await courtService.fetchCourtPhotos(court.id)
+    console.log(photos)
+    setCourtPhotos(photos.img_url)
+    })()
+  }
   },[visible])
 
-   const toggleModal = () =>{
-     if(visible){
-       setModalVisible(true)
-     }else{
-       setModalVisible(false)
-     }
-   }
+  const renderPhotos = () =>{
+    if (courtPhotos)
+    return(
+      courtPhotos.map((image,index) =>(
+        <Image
+        style={styles.img}
+        key={index}
+        source={{uri:image}} />
+      ))
+    )
+    return null
+  }
+
 
   return(
     <Modal visible={modalVisible} 
@@ -32,11 +58,14 @@ const Separator = () => (
             onSwipeComplete={() => setModalShowable(false)}>
       <View style={styles.centeredView}>
       <View style={styles.modalView}>
-        <Image
-          style={styles.img}
-          source={{uri:'https://www.noozhawk.com/images/made/images/uploads/042120-SBHS-Peabody-Stadium-4-bh-1600_1320_880_80_c1.jpg'}}
-          resizeMode ='contain'
-          />
+        <ScrollView 
+          pagingEnabled 
+          horizontal
+          showsHorizontalScrollIndicator={true}
+          style={styles.gallery}
+          >
+          {renderPhotos()}
+          </ScrollView>
         <Text style={styles.title}>{court.title}</Text>
         <Separator/>
         <Text style={styles.hooper}>Current Hoopers: {court.activeHoopers}</Text>
@@ -77,9 +106,9 @@ const styles = StyleSheet.create({
 
   },
   img:{
-    marginTop:-50,
     width:320,
     height:350,
+    resizeMode:'contain'
   },
   title:{
     marginTop:-45,
@@ -113,7 +142,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
-  }
+  },
+  gallery:{
+    width:320,
+    height:350,
+    marginTop:-50,
+  },
 
 })
 
